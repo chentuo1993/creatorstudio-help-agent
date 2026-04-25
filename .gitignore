@@ -1,0 +1,19 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+.DS_Store
+.pytest_cache/
+.ruff_cache/
+
+raw/
+raw/**/*.html
+*.tmp
+
+# Index DB: ship the compressed copy, not the raw 120 MB file.
+data/index.db
+!data/index.db.gz
+/tmp/
+*.log

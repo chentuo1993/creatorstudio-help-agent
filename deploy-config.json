@@ -1,0 +1,15 @@
+{
+  "repo_url": "https://github.com/chentuo1993/creatorstudio-help-agent",
+  "service_name": "creatorstudio-help",
+  "branch": "main",
+  "env_vars": {
+    "EMBEDDING_MODEL": "text-embedding-3-small",
+    "RERANK_MODEL": "deepseek",
+    "ANSWER_MODEL": "grok-4-fast",
+    "DB_PATH": "data/index.db",
+    "LOG_LEVEL": "info",
+    "ENABLE_RERANK": "false",
+    "RETRIEVE_TOP_K": "20",
+    "ANSWER_TOP_K": "5"
+  }
+}
