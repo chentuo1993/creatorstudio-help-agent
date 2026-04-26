@@ -25,6 +25,9 @@ class Settings:
 
 
 def load_settings() -> Settings:
+    enable = os.getenv("ENABLE_RERANK", "true").lower() == "true"
+    default_retr = "40" if enable else "20"
+    retrieve_k = int(os.getenv("RETRIEVE_TOP_K", default_retr))
     return Settings(
         base_url=os.getenv("AI_BUILDERS_BASE_URL", "https://space.ai-builders.com/backend/v1"),
         api_key=os.environ.get("AI_BUILDER_TOKEN", ""),
@@ -33,7 +36,7 @@ def load_settings() -> Settings:
         answer_model=os.getenv("ANSWER_MODEL", "grok-4-fast"),
         db_path=os.getenv("DB_PATH", "data/index.db"),
         port=int(os.getenv("PORT", "8000")),
-        enable_rerank=os.getenv("ENABLE_RERANK", "false").lower() == "true",
-        retrieve_top_k=int(os.getenv("RETRIEVE_TOP_K", "20")),
+        enable_rerank=enable,
+        retrieve_top_k=retrieve_k,
         answer_top_k=int(os.getenv("ANSWER_TOP_K", "5")),
     )

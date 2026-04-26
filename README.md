@@ -6,9 +6,10 @@ See [`PRD.md`](./PRD.md) for the one-page product spec and architecture rational
 
 ## Architecture (TL;DR)
 - **Storage:** single SQLite file with FTS5 (BM25) + [`sqlite-vec`](https://github.com/asg017/sqlite-vec) (vectors). Fits a 256 MB Koyeb instance.
-- **Retrieve:** hybrid (BM25 + vector) → RRF fusion → top-K candidates (default K=20).
-- **Rerank:** *optional* LLM-as-reranker (deepseek). Off by default (`ENABLE_RERANK=false`). Hybrid alone is precise enough at MVP scale (~hundreds of chunks); turn on once the corpus grows.
-- **Generate:** `grok-4-fast` with grounded prompt + inline citations.
+- **Retrieve:** hybrid (BM25 + vector) → RRF fusion → top-K (default K=**40** when rerank is on, **20** when off).
+- **Rerank:** LLM-as-reranker (`deepseek` by default). **On** by default (`ENABLE_RERANK=true`); set `false` for lowest latency on tiny corpora.
+- **Generate:** `grok-4-fast` with grounded prompt, optional **RECENT CONVERSATION** block for follow-ups (multi-turn).
+- **API:** `POST /api/chat` with `{ "question": "…", "history": [{ "role": "user"|"assistant", "content": "…" }, …] }`.
 - **Embeddings & LLM:** AI Builders Space OpenAI-compatible API, single `AI_BUILDER_TOKEN`.
 
 ### Measured Phase 0 latencies (30 FCP pages, 86 chunks, rerank off)
@@ -54,7 +55,7 @@ Health check: `curl http://localhost:8000/healthz`
 
 ## Deployment to ai-builders.space
 
-1. Push this repo (with `data/index.db`) to a public GitHub repo.
+1. Push this repo (with `data/index.db.gz`; the Dockerfile gunzips at build) to a public GitHub repo.
 2. Confirm `Dockerfile` is at the root and uses `${PORT:-8000}` (it does).
 3. From Cursor, ask the AI Builders deployment agent to deploy, providing:
    - GitHub URL
@@ -72,8 +73,15 @@ Designed to stay **under $5** for the MVP demo:
 - Per query: ~$0.0014 (embed + rerank + answer)
 - $5 → ~3,400 queries
 
+## Golden-set evaluation
+```bash
+# server running locally on :8000
+python eval/run_golden.py --base http://127.0.0.1:8000
+```
+`eval/golden_set.json` holds 50 items (in-doc questions + a few out-of-scope refusals). For optional RAGAS faithfulness metrics, see `eval/run_ragas_optional.py` (install `ragas` first).
+
 ## What's intentionally NOT in MVP
-- Multi-turn memory
+- **Server-persisted** chat history (client sends `history` each turn; no DB of users)
 - Non-English languages
 - Real cross-encoder reranker (LLM-as-reranker is the 256 MB-friendly substitute)
 - Authentication / per-user history
@@ -101,7 +109,10 @@ app/
   retrieval.py         ← hybrid: BM25 + vec → RRF
   rerank.py            ← LLM-as-reranker
   answer.py            ← grounded prompt + citations
-  static/index.html    ← single-page UI
+  static/concept-a.html  ← Liquid Glass UI
+eval/
+  golden_set.json      ← 50-question set
+  run_golden.py          ← p50 / pass-fail
 data/
   index.db             ← built by ingest pipeline (committed)
 ```

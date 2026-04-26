@@ -8,8 +8,8 @@
     "ANSWER_MODEL": "grok-4-fast",
     "DB_PATH": "data/index.db",
     "LOG_LEVEL": "info",
-    "ENABLE_RERANK": "false",
-    "RETRIEVE_TOP_K": "20",
+    "ENABLE_RERANK": "true",
+    "RETRIEVE_TOP_K": "40",
     "ANSWER_TOP_K": "5"
   }
 }

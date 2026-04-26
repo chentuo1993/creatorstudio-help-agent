@@ -1,10 +1,17 @@
 // Shared chat API + tiny markdown renderer used by all UI concepts.
 window.HelpAgent = (() => {
-  async function ask(question) {
+  /**
+   * @param {string} question — latest user message
+   * @param {{role:string, content:string}[]} [history] — prior turns (no system)
+   */
+  async function ask(question, history) {
     const r = await fetch("/api/chat", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ question }),
+      body: JSON.stringify({
+        question,
+        history: history && history.length ? history : [],
+      }),
     });
     if (!r.ok) throw new Error("HTTP " + r.status);
     return r.json();
