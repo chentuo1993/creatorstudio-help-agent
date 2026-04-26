@@ -6,6 +6,7 @@ import re
 
 KNOWN_APPS = {
     "Final Cut Pro": [r"final\s*cut\s*pro", r"\bfcp\b"],
+    "Final Cut Camera": [r"final\s*cut\s*camera", r"\bfcc\b"],
     "Motion": [r"\bmotion\b"],
     "Compressor": [r"\bcompressor\b"],
     "Logic Pro": [r"logic\s*pro", r"\blogic\b"],

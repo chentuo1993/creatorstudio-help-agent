@@ -21,8 +21,11 @@
     }
     * { box-sizing: border-box; }
     html, body { margin: 0; padding: 0; }
+    @media (prefers-reduced-motion: reduce) {
+      body, .h1, .ai-glow { animation: none !important; }
+    }
     body {
-      min-height: 100vh;
+      min-height: 100dvh;
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
       color: var(--fg);
       background:
@@ -31,16 +34,16 @@
         radial-gradient(80% 70% at 50% 100%, var(--bg-3) 0%, transparent 60%),
         #faf9fb;
       background-attachment: fixed;
-      animation: drift 30s ease-in-out infinite alternate;
     }
+    @media (prefers-color-scheme: light) { body { animation: drift 30s ease-in-out infinite alternate; } }
     @media (prefers-color-scheme: dark) { body { background-color: #0a0a0c; } }
     @keyframes drift {
       from { background-position: 0 0, 0 0, 0 0, 0 0; }
       to { background-position: 5% 5%, -5% 8%, 8% -3%, 0 0; }
     }
-    .wrap { max-width: 760px; margin: 0 auto; padding: 56px 20px 80px; }
-
-    .hero { text-align: center; margin-bottom: 36px; }
+    .shell { max-width: 760px; margin: 0 auto; min-height: 100dvh; display: flex; flex-direction: column; }
+    #main-scroll { flex: 1; overflow-y: auto; padding: 32px 20px 8px; min-height: 0; -webkit-overflow-scrolling: touch; }
+    .hero { text-align: center; margin-bottom: 20px; }
     .badge {
       display: inline-flex; align-items: center; gap: 8px;
       padding: 6px 14px; border-radius: 999px;
@@ -50,236 +53,265 @@
     .ai-glow {
       width: 8px; height: 8px; border-radius: 50%;
       background: conic-gradient(from 0deg, #FF3B30, #FFB200, #34C759, #0A84FF, #BF5AF2, #FF3B30);
-      animation: spin 4s linear infinite;
     }
+    @media (prefers-color-scheme: no-preference), (prefers-color-scheme: light) { .ai-glow { animation: spin 4s linear infinite; } }
     @keyframes spin { to { transform: rotate(360deg); } }
-    h1 {
-      font-size: 2.4rem; font-weight: 700; letter-spacing: -0.02em;
-      margin: 16px 0 8px;
+    h1, .h1 {
+      font-size: 2.1rem; font-weight: 700; letter-spacing: -0.02em;
+      margin: 12px 0 8px;
       background: linear-gradient(120deg, #FF3B30, #FF9500, #FFCC00, #34C759, #0A84FF, #BF5AF2);
       background-size: 300% 300%;
       -webkit-background-clip: text; background-clip: text; color: transparent;
-      animation: shimmer 6s ease-in-out infinite;
     }
+    @media (prefers-color-scheme: light) { h1, .h1 { animation: shimmer 6s ease-in-out infinite; } }
     @keyframes shimmer { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
-    .sub { color: var(--fg-dim); font-size: 1.05rem; max-width: 480px; margin: 0 auto; }
+    .sub { color: var(--fg-dim); font-size: 0.95rem; max-width: 540px; margin: 0 auto; line-height: 1.45; }
+    .sub strong { color: var(--fg); }
+    .fineprint { font-size: 0.78rem; color: var(--fg-dim); max-width: 520px; margin: 8px auto 0; line-height: 1.4; }
+    .follow { font-size: 0.82rem; color: var(--fg-dim); text-align: center; margin: 6px 0 12px; }
 
     .apps {
-      display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
-      margin: 28px 0 24px;
+      display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+      margin: 18px 0 0;
     }
     .app-chip {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 6px 12px 6px 6px; border-radius: 999px;
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 10px 5px 5px; border-radius: 999px;
       background: var(--card); backdrop-filter: blur(40px) saturate(180%);
-      border: 1px solid var(--border); font-size: 0.85rem;
-      color: var(--fg); cursor: default;
+      border: 1px solid var(--border); font-size: 0.78rem;
+      color: var(--fg);
     }
+    @media (max-width: 520px) { .app-chip { font-size: 0.7rem; padding: 4px 8px; } }
+    @media (max-width: 380px) { .app-chip { font-size: 0.65rem; } }
 
-    .ask-card {
-      background: var(--card); backdrop-filter: blur(40px) saturate(180%);
-      border: 1px solid var(--border); border-radius: 22px;
-      padding: 14px 16px;
-      box-shadow: 0 30px 60px -30px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.5);
-    }
-    .ask-card form { display: flex; gap: 10px; align-items: center; }
-    .ask-card input {
-      flex: 1; padding: 12px 8px; border: none; outline: none;
-      background: transparent; color: var(--fg); font-size: 1.05rem;
-      font-family: inherit;
-    }
-    .ask-card input::placeholder { color: var(--fg-dim); }
-    .ask-btn {
-      padding: 10px 18px; border: none; border-radius: 14px;
-      background: linear-gradient(135deg, #0A84FF, #BF5AF2);
-      color: white; font-weight: 600; cursor: pointer; font-size: 0.95rem;
-      transition: transform 0.15s ease;
-    }
-    .ask-btn:hover { transform: translateY(-1px); }
-    .ask-btn[disabled] { opacity: 0.5; cursor: progress; }
-
-    .suggestions {
-      display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; padding: 0 4px;
-    }
+    .suggestions { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0 12px; justify-content: center; }
     .suggest {
-      padding: 6px 12px; border-radius: 999px; font-size: 0.83rem;
+      padding: 6px 10px; border-radius: 999px; font-size: 0.8rem;
       background: rgba(127,127,127,0.10); border: 1px solid var(--border);
       color: var(--fg-dim); cursor: pointer; transition: all 0.15s;
     }
-    .suggest:hover { color: var(--fg); background: rgba(127,127,127,0.18); }
+    .suggest:hover { color: var(--fg); }
+
+    .composer {
+      position: sticky; bottom: 0; z-index: 20; flex-shrink: 0;
+      background: var(--card); backdrop-filter: blur(32px) saturate(180%);
+      border-top: 1px solid var(--border);
+      box-shadow: 0 -6px 40px -12px rgba(0,0,0,0.2);
+      padding: 10px 16px calc(12px + env(safe-area-inset-bottom));
+    }
+    .composer-inner { max-width: 720px; margin: 0 auto; }
+    .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; gap: 8px; }
+    .ask-card {
+      background: rgba(255,255,255,0.2); border: 1px solid var(--border);
+      border-radius: 16px; padding: 6px 10px;
+    }
+    .ask-card form { display: flex; gap: 8px; align-items: flex-end; }
+    .ask-card textarea {
+      flex: 1; min-height: 44px; max-height: 140px; padding: 8px; border: none; outline: none; resize: vertical;
+      background: transparent; color: var(--fg); font-size: 1rem; font-family: inherit; line-height: 1.4;
+    }
+    .ask-card textarea::placeholder { color: var(--fg-dim); }
+    .ask-btn {
+      padding: 10px 16px; border: none; border-radius: 12px;
+      background: linear-gradient(135deg, #0A84FF, #BF5AF2);
+      color: white; font-weight: 600; cursor: pointer; font-size: 0.9rem; align-self: center;
+    }
+    .ask-btn[disabled] { opacity: 0.45; cursor: not-allowed; }
+    .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--fg); border-radius: 10px; padding: 4px 10px; font-size: 0.8rem; cursor: pointer; }
+
+    .thread { display: flex; flex-direction: column; gap: 12px; padding-bottom: 4px; }
+    .bubble { max-width: 92%; border-radius: 16px; padding: 10px 14px; font-size: 0.95rem; line-height: 1.45; }
+    .bubble.user { align-self: flex-end; background: rgba(10, 132, 255, 0.14); border: 1px solid var(--border); }
+    .stream-body { white-space: pre-wrap; word-break: break-word; font-size: 0.96rem; line-height: 1.55; }
 
     .answer-card {
-      margin-top: 26px;
-      background: var(--card); backdrop-filter: blur(40px) saturate(180%);
-      border: 1px solid var(--border); border-radius: 22px;
-      padding: 24px 26px;
-      box-shadow: 0 30px 60px -30px rgba(0,0,0,0.25);
-      animation: fadein 0.4s ease;
+      background: var(--card); border: 1px solid var(--border); border-radius: 18px;
+      padding: 16px 18px; box-shadow: 0 20px 40px -24px rgba(0,0,0,0.2);
     }
-    @keyframes fadein { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-    .answer-card .pill-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+    .answer-card .pill-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
     .answer-card .pill {
       display: inline-flex; align-items: center; gap: 6px;
-      padding: 4px 10px 4px 4px; border-radius: 999px;
-      background: rgba(127,127,127,0.12); font-size: 0.78rem; color: var(--fg);
+      padding: 3px 8px 3px 3px; border-radius: 999px; font-size: 0.74rem;
+      background: rgba(127,127,127,0.12);
     }
-    .answer-card p { line-height: 1.65; margin: 0 0 12px; }
-    .answer-card h2, .answer-card h3 { margin-top: 16px; font-weight: 600; }
-    .answer-card ul { padding-left: 22px; margin: 8px 0; }
-    .answer-card li { margin: 4px 0; line-height: 1.6; }
-    .answer-card sup.cite { color: #0A84FF; font-weight: 600; cursor: pointer; }
-    .answer-card code { background: rgba(127,127,127,0.15); padding: 1px 6px; border-radius: 4px; font-size: 0.92em; }
-
-    .citations { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--border); }
-    .citations h4 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg-dim); margin: 0 0 10px; font-weight: 600; }
-    .citations a {
-      display: flex; align-items: flex-start; gap: 10px; padding: 10px;
-      border-radius: 12px; text-decoration: none; color: var(--fg);
-      transition: background 0.15s;
-    }
-    .citations a:hover { background: rgba(127,127,127,0.10); }
-    .citations .num { color: #0A84FF; font-weight: 700; font-size: 0.85rem; min-width: 18px; }
-    .citations .title { font-size: 0.92rem; }
-    .citations .crumbs { font-size: 0.78rem; color: var(--fg-dim); margin-top: 2px; }
-
-    .empty { color: var(--fg-dim); text-align: center; padding: 32px 0; font-size: 0.95rem; }
+    .answer-card p { line-height: 1.6; margin: 0 0 10px; }
+    .answer-card sup.cite { color: #0A84FF; font-weight: 600; }
+    .citations { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border); }
+    .citations h4 { font-size: 0.7rem; text-transform: uppercase; color: var(--fg-dim); margin: 0 0 6px; }
+    .citations a { display: flex; gap: 8px; padding: 6px; border-radius: 10px; text-decoration: none; color: var(--fg); }
+    .citations a:hover { background: rgba(127,127,127,0.1); }
+    .empty { color: var(--fg-dim); text-align: center; padding: 16px; }
     .thinking { display: inline-flex; gap: 4px; }
-    .thinking span { width: 6px; height: 6px; border-radius: 50%; background: var(--fg-dim); animation: bounce 1.2s infinite; }
-    .thinking span:nth-child(2) { animation-delay: 0.15s; }
-    .thinking span:nth-child(3) { animation-delay: 0.3s; }
-    @keyframes bounce { 0%,80%,100% { transform: translateY(0); opacity: 0.5; } 40% { transform: translateY(-6px); opacity: 1; } }
-
-    .thread { margin-top: 22px; display: flex; flex-direction: column; gap: 14px; }
-    .bubble { max-width: 92%; border-radius: 18px; padding: 12px 16px; font-size: 0.98rem; line-height: 1.45; }
-    .bubble.user {
-      align-self: flex-end;
-      background: rgba(10, 132, 255, 0.14);
-      border: 1px solid var(--border);
-    }
+    .thinking span { width: 5px; height: 5px; border-radius: 50%; background: var(--fg-dim); animation: bounce 1.2s infinite; }
+    .thinking span:nth-child(2) { animation-delay: 0.12s; }
+    .thinking span:nth-child(3) { animation-delay: 0.24s; }
+    @media (prefers-reduced-motion: no-preference) { @keyframes bounce { 0%,80%,100% { opacity: 0.5; } 40% { opacity: 1; } } }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="hero">
-      <div class="badge"><span class="ai-glow"></span> Apple Intelligence · grounded in official docs</div>
-      <h1>Creator Studio Help</h1>
-      <p class="sub">Ask anything about Final Cut Pro, Logic Pro, Pixelmator Pro, Motion, Compressor, MainStage, Keynote, Pages, Numbers, or Freeform.</p>
-      <div class="apps" id="apps"></div>
+  <div class="shell">
+    <div id="main-scroll">
+      <div class="hero">
+        <div class="badge"><span class="ai-glow" aria-hidden="true"></span> Apple Intelligence · support.apple.com guides</div>
+        <h1>Creator Studio Help</h1>
+        <p class="sub">Answers for all <strong>11</strong> included apps: Final Cut Pro, <strong>Final Cut Camera</strong> (iPhone), Logic Pro, Motion, Compressor, MainStage, Pixelmator Pro, Keynote, Pages, <strong>Numbers</strong>, and Freeform. Bundle-level questions (What’s in Apple Creator Studio?, subscription, education pricing) are grounded in the same public docs, plus a short in-model bundle note when you ask in those terms.</p>
+        <p class="fineprint">We do not read your Apple ID. Answers are for reference only; check Apple’s official pages for the latest. Not affiliated with Apple Inc.</p>
+        <p class="follow">You can <strong>follow up</strong> in the same thread — your last few messages are sent with each question to resolve “it / that / on iPad” and stay on topic.</p>
+        <div class="apps" id="apps" aria-label="All Creator Studio apps"></div>
+        <div class="suggestions" id="sugs"></div>
+      </div>
+      <div class="thread" id="out"></div>
     </div>
 
-    <div class="ask-card">
-      <form id="f">
-        <input id="q" type="text" placeholder="What is the Magnetic Timeline?" autocomplete="off" autofocus />
-        <button class="ask-btn" id="b" type="submit">Ask</button>
-      </form>
-      <div class="suggestions" id="sugs"></div>
+    <div class="composer" role="form" aria-label="Ask a question">
+      <div class="composer-inner">
+        <div class="toolbar">
+          <button type="button" class="btn-ghost" id="newchat" title="Start over">New chat</button>
+          <span class="suggest" style="cursor:default; border: none; background: transparent; font-size:0.75rem; color: var(--fg-dim)">↵ to send</span>
+        </div>
+        <div class="ask-card">
+          <form id="f">
+            <textarea id="q" rows="2" placeholder="Ask a follow-up or a new question…" autocomplete="off" autofocus></textarea>
+            <button class="ask-btn" id="b" type="submit">Send</button>
+          </form>
+        </div>
+      </div>
     </div>
-
-    <p style="text-align:right; margin: 0 0 0 0;">
-      <button type="button" id="newchat" class="suggest" style="font-size:0.8rem; padding:4px 12px;">New chat</button>
-    </p>
-
-    <div class="thread" id="out"></div>
   </div>
 
   <script src="/static/icons.js"></script>
   <script src="/static/api.js"></script>
   <script>
     const SUGS = [
-      "What is the Magnetic Timeline?",
-      "How do I import media from my iPhone?",
-      "What's included in Apple Creator Studio?",
-      "How do I edit videos to the rhythm of music?",
+      "What is included in Apple Creator Studio?",
+      "What is the Magnetic Timeline in Final Cut Pro?",
+      "How do I add a chart in Numbers?",
+      "What’s the difference between Final Cut Pro and Final Cut Camera?",
     ];
 
-    const apps = document.getElementById('apps');
-    APP_ICONS.list().slice(0, 8).forEach(name => {
-      const c = document.createElement('div');
-      c.className = 'app-chip';
-      c.innerHTML = APP_ICONS.get(name, 22) + '<span>' + name + '</span>';
+    const apps = document.getElementById("apps");
+    APP_ICONS.list().forEach((name) => {
+      const c = document.createElement("div");
+      c.className = "app-chip";
+      c.innerHTML = APP_ICONS.get(name, 20) + "<span>" + name + "</span>";
       apps.appendChild(c);
     });
-
-    const sugs = document.getElementById('sugs');
-    SUGS.forEach(text => {
-      const b = document.createElement('button');
-      b.className = 'suggest'; b.type = 'button'; b.textContent = text;
-      b.onclick = () => { document.getElementById('q').value = text; document.getElementById('f').requestSubmit(); };
+    const sugs = document.getElementById("sugs");
+    SUGS.forEach((text) => {
+      const b = document.createElement("button");
+      b.className = "suggest"; b.type = "button"; b.textContent = text;
+      b.onclick = () => {
+        const q2 = document.getElementById("q");
+        q2.value = text; q2.focus();
+        document.getElementById("f").requestSubmit();
+      };
       sugs.appendChild(b);
     });
 
-    const out = document.getElementById('out');
-    /** @type {{role:string, content:string, citations?:*, matched_apps?:*}}[] */
+    const out = document.getElementById("out");
+    const sc = () => document.getElementById("main-scroll");
     let convo = [];
 
-    function esc(s) {
-      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    function esc(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+
+    function citeHtml(m) {
+      if (!m.citations || !m.citations.length) return "";
+      const cites = m.citations.map(
+        (c) =>
+          `<a href="${c.url}" target="_blank" rel="noreferrer">
+            <span style="color:#0A84FF; font-weight:600; min-width:18px;">[${c.n}]</span>
+            <span><div style="font-size:0.88rem;">${esc(c.app)} — ${(c.breadcrumbs && c.breadcrumbs.length) ? esc(c.breadcrumbs.join(" › ")) : esc(c.title)}</div>
+            <div style="font-size:0.75rem; color: var(--fg-dim)">${c.url.replace("https://support.apple.com", "support.apple.com")}</div></span>
+          </a>`
+      ).join("");
+      return `<div class="citations"><h4>Sources</h4>${cites}</div>`;
     }
 
     function renderAsst(m) {
-      const body = m.content;
-      const apps = (m.matched_apps || []).map(a =>
-        `<span class="pill">${APP_ICONS.get(a, 18)}${a}</span>`).join('');
-      const cites = (m.citations || []).map(c =>
-        `<a href="${c.url}" target="_blank" rel="noreferrer">
-           <span class="num">[${c.n}]</span>
-           <span>
-             <div class="title">${c.app} — ${c.breadcrumbs.length ? c.breadcrumbs.join(' › ') : c.title}</div>
-             <div class="crumbs">${c.url.replace('https://support.apple.com', '')}</div>
-           </span>
-         </a>`).join('');
-      return `
-        <div class="answer-card" style="margin-top:0;">
-          ${apps ? `<div class="pill-row">${apps}</div>` : ''}
-          ${HelpAgent.renderMarkdown(body)}
-          ${cites ? `<div class="citations"><h4>Sources</h4>${cites}</div>` : ''}
-        </div>`;
+      const ap = (m.matched_apps || []).map((a) => `<span class="pill">${APP_ICONS.get(a, 16)}<span style="max-width:160px;overflow:hidden;text-overflow:ellipsis">${esc(a)}</span></span>`).join("");
+      if (m._streaming) {
+        return `<div class="answer-card"><div class="pill-row">${ap || ""}</div>
+          <div class="stream-body" role="log" aria-live="polite" aria-atomic="false">${esc(m.content || "")}</div>
+          ${citeHtml(m)}</div>`;
+      }
+      return `<div class="answer-card">${ap ? `<div class="pill-row">${ap}</div>` : ""}
+        ${HelpAgent.renderMarkdown(m.content || "")}
+        ${citeHtml(m)}</div>`;
     }
 
     function drawThread(loading) {
-      let html = '';
+      let html = "";
       for (const m of convo) {
-        if (m.role === 'user') {
-          html += `<div class="bubble user">${esc(m.content)}</div>`;
-        } else {
-          html += renderAsst(m);
-        }
+        if (m.role === "user") html += `<div class="bubble user">${esc(m.content)}</div>`;
+        else html += renderAsst(m);
       }
-      if (loading) {
-        html += `<div class="answer-card"><p class="empty"><span class="thinking"><span></span><span></span><span></span></span></p></div>`;
-      }
+      if (loading && (convo.length === 0 || (convo[convo.length - 1] && convo[convo.length - 1].role === "user")))
+        html += `<div class="answer-card empty"><span class="thinking" aria-label="Loading"><span></span><span></span><span></span></span></div>`;
       out.innerHTML = html;
-      out.scrollTop = out.scrollHeight;
+      sc().scrollTop = sc().scrollHeight;
     }
 
-    document.getElementById('newchat').addEventListener('click', () => {
+    document.getElementById("newchat").addEventListener("click", () => {
       convo = [];
       drawThread(false);
+      document.getElementById("q").focus();
     });
 
-    document.getElementById('f').addEventListener('submit', async (e) => {
+    document.getElementById("f").addEventListener("submit", async (e) => {
       e.preventDefault();
-      const qel = document.getElementById('q');
+      const qel = document.getElementById("q");
       const q = qel.value.trim();
       if (!q) return;
-      const btn = document.getElementById('b');
+      const btn = document.getElementById("b");
       btn.disabled = true;
-      convo.push({ role: 'user', content: q });
-      qel.value = '';
+      const hist = convo.map(({ role, content }) => ({ role, content }));
+      convo.push({ role: "user", content: q });
+      qel.value = "";
       drawThread(true);
-      const hist = convo
-        .slice(0, -1)
-        .map(({ role, content }) => ({ role, content }));
+      let gotMeta = false;
       try {
-        const data = await HelpAgent.ask(q, hist);
-        convo.push({ role: 'assistant', content: data.answer, citations: data.citations, matched_apps: data.matched_apps });
-        drawThread(false);
+        await HelpAgent.askStream(q, hist, {
+          onMeta(j) {
+            gotMeta = true;
+            convo.push({ role: "assistant", content: "", citations: j.citations || [], matched_apps: j.matched_apps || [], _streaming: true });
+            drawThread(false);
+          },
+          onToken(t) {
+            const a = convo[convo.length - 1];
+            a.content = (a.content || "") + t;
+            drawThread(false);
+            sc().scrollTop = sc().scrollHeight;
+          },
+          onDone() {
+            const a = convo[convo.length - 1];
+            if (a) a._streaming = false;
+            drawThread(false);
+            sc().scrollTop = sc().scrollHeight;
+          },
+        });
       } catch (err) {
-        convo.push({ role: 'assistant', content: '**Error:** ' + err.message, matched_apps: [], citations: [] });
-        drawThread(false);
+        if (gotMeta) {
+          const a = convo[convo.length - 1];
+          if (a) { a._streaming = false; a.content = (a.content || "") + "\n\n_(Stream interrupted. Try again.)_"; }
+          drawThread(false);
+        } else {
+          try {
+            const data = await HelpAgent.ask(q, hist);
+            convo.push({ role: "assistant", content: data.answer, citations: data.citations, matched_apps: data.matched_apps, _streaming: false });
+            drawThread(false);
+          } catch (e2) {
+            convo.push({ role: "assistant", content: "**Error:** " + (e2.message || e2), _streaming: false, citations: [], matched_apps: [] });
+            drawThread(false);
+          }
+        }
       } finally {
         btn.disabled = false;
+        qel.focus();
       }
+    });
+    const q2 = document.getElementById("q");
+    q2.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); document.getElementById("f").requestSubmit(); }
     });
   </script>
 </body>

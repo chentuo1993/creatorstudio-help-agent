@@ -34,3 +34,25 @@ def chat(model: str, system: str, user: str, max_tokens: int = 600) -> str:
         temperature=0.2,
     )
     return resp.choices[0].message.content or ""
+
+
+def chat_stream(
+    model: str,
+    system: str,
+    user: str,
+    max_tokens: int = 700,
+):
+    stream = get_client().chat.completions.create(
+        model=model,
+        messages=[
+            {"role": "system", "content": system},
+            {"role": "user", "content": user},
+        ],
+        max_tokens=max_tokens,
+        temperature=0.2,
+        stream=True,
+    )
+    for part in stream:
+        delta = part.choices[0].delta.content or ""
+        if delta:
+            yield delta

@@ -9,7 +9,9 @@ See [`PRD.md`](./PRD.md) for the one-page product spec and architecture rational
 - **Retrieve:** hybrid (BM25 + vector) → RRF fusion → top-K (default K=**40** when rerank is on, **20** when off).
 - **Rerank:** LLM-as-reranker (`deepseek` by default). **On** by default (`ENABLE_RERANK=true`); set `false` for lowest latency on tiny corpora.
 - **Generate:** `grok-4-fast` with grounded prompt, optional **RECENT CONVERSATION** block for follow-ups (multi-turn).
-- **API:** `POST /api/chat` with `{ "question": "…", "history": [{ "role": "user"|"assistant", "content": "…" }, …] }`.
+- **API:** `POST /api/chat` with `{ "question": "…", "history": […] }`. For **streaming** answers, `POST /api/chat/stream` (Server-Sent Events: first `t: "meta"`, then `t: "d", "d": "…"`, then `t: "done"`).
+- **Bundle questions:** if the user asks about the **Apple Creator Studio** subscription / what’s included, a small **BUNDLE CONTEXT** is prepended; official Support articles in retrieval still take precedence. Public reference: [About Apple Creator Studio](https://support.apple.com/125029).
+- **Faster path:** set `PERF_MODE=true` to turn off rerank and use a smaller K (see `.env.example`).
 - **Embeddings & LLM:** AI Builders Space OpenAI-compatible API, single `AI_BUILDER_TOKEN`.
 
 ### Measured Phase 0 latencies (30 FCP pages, 86 chunks, rerank off)

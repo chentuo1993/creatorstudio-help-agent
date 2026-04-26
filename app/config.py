@@ -25,8 +25,14 @@ class Settings:
 
 
 def load_settings() -> Settings:
-    enable = os.getenv("ENABLE_RERANK", "true").lower() == "true"
-    default_retr = "40" if enable else "20"
+    # PERF_MODE: skip rerank + smaller K for lower latency (trade off precision)
+    perf = os.getenv("PERF_MODE", "false").lower() == "true"
+    if perf:
+        enable = False
+        default_retr = "20"
+    else:
+        enable = os.getenv("ENABLE_RERANK", "true").lower() == "true"
+        default_retr = "40" if enable else "20"
     retrieve_k = int(os.getenv("RETRIEVE_TOP_K", default_retr))
     return Settings(
         base_url=os.getenv("AI_BUILDERS_BASE_URL", "https://space.ai-builders.com/backend/v1"),
